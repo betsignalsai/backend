@@ -12,6 +12,29 @@ export class MailService {
     private readonly configService: ConfigService<AllConfigType>,
   ) {}
 
+  private getTemplatePath(templateName: string): string {
+    const workingDirectory = this.configService.getOrThrow(
+      'app.workingDirectory',
+      {
+        infer: true,
+      },
+    );
+
+    const isProduction =
+      this.configService.get('app.nodeEnv', { infer: true }) === 'production';
+
+    // In production, templates are in dist folder, in development they're in src
+    const basePath = isProduction ? 'dist' : 'src';
+
+    return path.join(
+      workingDirectory,
+      basePath,
+      'mail',
+      'mail-templates',
+      templateName,
+    );
+  }
+
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
     const emailConfirmTitle = 'common.confirmEmail';
     const text1 = 'confirm-email.text1';
@@ -29,15 +52,7 @@ export class MailService {
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
-      templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
-        'mail-templates',
-        'activation.hbs',
-      ),
+      templatePath: this.getTemplatePath('activation.hbs'),
       context: {
         title: emailConfirmTitle,
         url: url.toString(),
@@ -71,15 +86,7 @@ export class MailService {
       to: mailData.to,
       subject: resetPasswordTitle,
       text: `${url.toString()} ${resetPasswordTitle}`,
-      templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
-        'mail-templates',
-        'reset-password.hbs',
-      ),
+      templatePath: this.getTemplatePath('reset-password.hbs'),
       context: {
         title: resetPasswordTitle,
         url: url.toString(),
@@ -112,15 +119,7 @@ export class MailService {
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
-      templatePath: path.join(
-        this.configService.getOrThrow('app.workingDirectory', {
-          infer: true,
-        }),
-        'src',
-        'mail',
-        'mail-templates',
-        'confirm-new-email.hbs',
-      ),
+      templatePath: this.getTemplatePath('confirm-new-email.hbs'),
       context: {
         title: emailConfirmTitle,
         url: url.toString(),
