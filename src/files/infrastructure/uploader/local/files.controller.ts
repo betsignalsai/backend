@@ -57,6 +57,6 @@ export class FilesLocalController {
   @Get(':path')
   @ApiExcludeEndpoint()
   download(@Param('path') path, @Response() response) {
-    return response.sendFile(path, { root: './files' });
+    return response.sendFile(path, { root: '/tmp/files' });
   }
 }
