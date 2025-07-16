@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+export const confirmNewEmailTemplate = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -27,12 +27,7 @@
                     style="display:inline-block;padding:20px;background:#00838f;text-decoration:none;color:#ffffff">{{actionTitle}}</a>
             </td>
         </tr>
-        <tr>
-            <td style="padding:20px;color:#808080;font-size:16px;font-weight:100">
-                {{text4}}
-            </td>
-        </tr>
     </table>
 </body>
 
-</html>
+</html>`;

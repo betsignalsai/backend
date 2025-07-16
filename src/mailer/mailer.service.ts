@@ -24,14 +24,23 @@ export class MailerService {
 
   async sendMail({
     templatePath,
+    templateString,
     context,
     ...mailOptions
   }: nodemailer.SendMailOptions & {
-    templatePath: string;
+    templatePath?: string;
+    templateString?: string;
     context: Record<string, unknown>;
   }): Promise<void> {
     let html: string | undefined;
-    if (templatePath) {
+
+    if (templateString) {
+      // Use template string directly
+      html = Handlebars.compile(templateString, {
+        strict: true,
+      })(context);
+    } else if (templatePath) {
+      // Fallback to file reading for backward compatibility
       const template = await fs.readFile(templatePath, 'utf-8');
       html = Handlebars.compile(template, {
         strict: true,

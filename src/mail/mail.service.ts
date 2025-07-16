@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MailData } from './interfaces/mail-data.interface';
 import { MailerService } from '../mailer/mailer.service';
-import path from 'path';
 import { AllConfigType } from '../config/config.type';
+import { activationTemplate } from './templates/activation.template';
+import { resetPasswordTemplate } from './templates/reset-password.template';
+import { confirmNewEmailTemplate } from './templates/confirm-new-email.template';
 
 @Injectable()
 export class MailService {
@@ -11,29 +13,6 @@ export class MailService {
     private readonly mailerService: MailerService,
     private readonly configService: ConfigService<AllConfigType>,
   ) {}
-
-  private getTemplatePath(templateName: string): string {
-    const workingDirectory = this.configService.getOrThrow(
-      'app.workingDirectory',
-      {
-        infer: true,
-      },
-    );
-
-    const isProduction =
-      this.configService.get('app.nodeEnv', { infer: true }) === 'production';
-
-    // In production, templates are in dist folder, in development they're in src
-    const basePath = isProduction ? 'dist' : 'src';
-
-    return path.join(
-      workingDirectory,
-      basePath,
-      'mail',
-      'mail-templates',
-      templateName,
-    );
-  }
 
   async userSignUp(mailData: MailData<{ hash: string }>): Promise<void> {
     const emailConfirmTitle = 'common.confirmEmail';
@@ -52,7 +31,7 @@ export class MailService {
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
-      templatePath: this.getTemplatePath('activation.hbs'),
+      templateString: activationTemplate,
       context: {
         title: emailConfirmTitle,
         url: url.toString(),
@@ -86,7 +65,7 @@ export class MailService {
       to: mailData.to,
       subject: resetPasswordTitle,
       text: `${url.toString()} ${resetPasswordTitle}`,
-      templatePath: this.getTemplatePath('reset-password.hbs'),
+      templateString: resetPasswordTemplate,
       context: {
         title: resetPasswordTitle,
         url: url.toString(),
@@ -119,7 +98,7 @@ export class MailService {
       to: mailData.to,
       subject: emailConfirmTitle,
       text: `${url.toString()} ${emailConfirmTitle}`,
-      templatePath: this.getTemplatePath('confirm-new-email.hbs'),
+      templateString: confirmNewEmailTemplate,
       context: {
         title: emailConfirmTitle,
         url: url.toString(),

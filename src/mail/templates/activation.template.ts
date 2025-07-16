@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+export const activationTemplate = `<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -17,7 +17,7 @@
         <tr>
             <td style="padding:20px;color:#808080;font-size:16px;font-weight:100">
                 {{text1}}<br>
-                {{text2}}<br>
+                {{text2}} {{app_name}}.<br>
                 {{text3}}
             </td>
         </tr>
@@ -30,4 +30,4 @@
     </table>
 </body>
 
-</html>
+</html>`;
